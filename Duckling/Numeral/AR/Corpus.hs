@@ -21,7 +21,7 @@ import Duckling.Resolve
 import Duckling.Testing.Types
 
 corpus :: Corpus
-corpus = (testContext {locale = makeLocale AR Nothing}, allExamples)
+corpus = (testContext {locale = makeLocale AR Nothing}, testOptions, allExamples)
 
 allExamples :: [Example]
 allExamples = concat
@@ -148,9 +148,14 @@ allExamples = concat
              [ "10000"
              , "10 آلاف"
              ]
+  , examples (NumeralValue 1000000)
+             [ "1000000"
+             , "مليون"
+             ]
   , examples (NumeralValue 3000000)
              [ "3 ملايين"
              , "3000000"
+             , "3 مليون"
              ]
   , examples (NumeralValue (-1200000))
              [ "-1200000"

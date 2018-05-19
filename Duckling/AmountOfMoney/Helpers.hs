@@ -12,7 +12,11 @@
 module Duckling.AmountOfMoney.Helpers
   ( currencyOnly
   , financeWith
+  , isSimpleAmountOfMoney
+  , isCent
   , isCents
+  , isCurrencyOnly
+  , isDime
   , isMoneyWithValue
   , isWithoutCents
   , withCents
@@ -27,7 +31,7 @@ import Data.Maybe (isJust)
 import Prelude
 
 import Duckling.AmountOfMoney.Types (Currency (..), AmountOfMoneyData (..))
-import Duckling.Numeral.Types (isInteger)
+import Duckling.Numeral.Types (getIntValue, isInteger)
 import Duckling.Dimensions.Types
 import Duckling.Types hiding (Entity(..))
 
@@ -53,6 +57,28 @@ isMoneyWithValue :: Predicate
 isMoneyWithValue (Token AmountOfMoney AmountOfMoneyData{value = v1, minValue = v2, maxValue = v3}) =
  any isJust [v1, v2, v3]
 isMoneyWithValue _ = False
+
+isCurrencyOnly :: Predicate
+isCurrencyOnly (Token AmountOfMoney AmountOfMoneyData
+  {value = Nothing, minValue = Nothing, maxValue = Nothing}) = True
+isCurrencyOnly _ = False
+
+isSimpleAmountOfMoney :: Predicate
+isSimpleAmountOfMoney (Token AmountOfMoney AmountOfMoneyData
+  {minValue = Nothing, maxValue = Nothing}) = True
+isSimpleAmountOfMoney _ = False
+
+isDime :: Predicate
+isDime (Token AmountOfMoney AmountOfMoneyData
+  {value = Just d, currency = Cent}) =
+  maybe False (\i -> (i `mod` 10) == 0) $ getIntValue d
+isDime _ = False
+
+isCent :: Predicate
+isCent (Token AmountOfMoney AmountOfMoneyData
+  {value = Just c, currency = Cent}) =
+  maybe False (\i -> i >= 0 && i <= 9) $ getIntValue c
+isCent _ = False
 
 -- -----------------------------------------------------------------
 -- Production
